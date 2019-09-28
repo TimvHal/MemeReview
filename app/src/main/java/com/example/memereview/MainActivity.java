@@ -33,6 +33,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReviewing(View v) {
-        startActivity(new Intent(this, MainMenu.class));
+        startActivity(new Intent(this, MemePage.class));
     }
 }
