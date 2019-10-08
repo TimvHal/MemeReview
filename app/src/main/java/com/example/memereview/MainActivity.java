@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("kanker", "zooi");
 
         Random r = new Random();
         int randInt = r.nextInt(2) + 1;
@@ -36,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void startReviewing(View v) {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
+        /*FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("massage");
 
-        myRef.setValue("Hello, World!");
-        startActivity(new Intent(this, MemePage.class));
+        myRef.setValue("Ben je lekker aan het lopen!");*/
+
+        //startActivity(new Intent(this, MemePage.class));
+        startActivity(new Intent(this, UploadMenu.class));
     }
 }
