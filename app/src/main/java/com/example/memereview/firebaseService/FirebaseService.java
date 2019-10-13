@@ -20,11 +20,11 @@ public class FirebaseService {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("Test!");
+        myRef.setValue("test again");
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
-        StorageReference firstMemerRef = storageReference.child("memes/meme.jpg");
+        StorageReference firstMemerRef = storageReference.child("memes/meme2.jpg");
 
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

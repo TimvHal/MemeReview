@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("kanker", "zooi");
-
         Random r = new Random();
         int randInt = r.nextInt(2) + 1;
         ImageView i = findViewById(R.id.start_emote);
@@ -45,6 +43,6 @@ public class MainActivity extends AppCompatActivity {
         myRef.setValue("Ben je lekker aan het lopen!");*/
 
         //startActivity(new Intent(this, MemePage.class));
-        startActivity(new Intent(this, UploadMenu.class));
+        startActivity(new Intent(this, LoginMenu.class));
     }
 }
