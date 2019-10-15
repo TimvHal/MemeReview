@@ -23,13 +23,6 @@ public class FreshFragment extends Fragment {
         freshViewModel =
                 ViewModelProviders.of(this).get(FreshViewModel.class);
         View root = inflater.inflate(R.layout.fragment_fresh, container, false);
-        final TextView textView = root.findViewById(R.id.text_fresh);
-        freshViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }

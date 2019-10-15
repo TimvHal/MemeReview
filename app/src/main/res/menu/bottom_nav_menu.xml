@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_fresh"
-        android:icon="@drawable/fresh_icon"
-        android:title="@string/title_fresh" />
+        android:id="@+id/navigation_owned"
+        android:icon="@drawable/owned_icon"
+        android:title="@string/title_owned" />
 
     <item
         android:id="@+id/navigation_hot"
@@ -12,9 +12,9 @@
         android:title="@string/title_hot" />
 
     <item
-        android:id="@+id/navigation_owned"
-        android:icon="@drawable/owned_icon"
-        android:title="@string/title_owned" />
+        android:id="@+id/navigation_fresh"
+        android:icon="@drawable/fresh_icon"
+        android:title="@string/title_fresh" />
 
     <item
         android:id="@+id/navigation_profile"

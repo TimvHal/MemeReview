@@ -23,13 +23,6 @@ public class OwnedFragment extends Fragment {
         ownedViewModel =
                 ViewModelProviders.of(this).get(OwnedViewModel.class);
         View root = inflater.inflate(R.layout.fragment_owned, container, false);
-        final TextView textView = root.findViewById(R.id.text_owned);
-        ownedViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }
