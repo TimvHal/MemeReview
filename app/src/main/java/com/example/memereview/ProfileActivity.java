@@ -79,7 +79,6 @@ public class ProfileActivity extends AppCompatActivity {
                     @SuppressLint("CheckResult")
                     @Override
                     public void onSuccess(Uri uri) {
-
                         Glide.with(getApplicationContext())
                                 .asBitmap()
                                 .load(uri)
