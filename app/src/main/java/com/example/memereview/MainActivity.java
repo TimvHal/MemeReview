@@ -3,13 +3,15 @@ package com.example.memereview;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.memereview.firebaseService.FirebaseService;
 
+import java.io.File;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,11 +36,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReviewing(View v) {
+        FirebaseService firebaseService = new FirebaseService();
 
-/*        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.setValue("Oh nee! Beschuldig me daar nooit van!");*/
-        startActivity(new Intent(this, MemePage.class));
+        //startActivity(new Intent(this, MemePage.class));
     }
 }
