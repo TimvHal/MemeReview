@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startReviewing(View v) {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+/*        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("Hello, World!");
+        myRef.setValue("Oh nee! Beschuldig me daar nooit van!");*/
         startActivity(new Intent(this, MemePage.class));
     }
 }
