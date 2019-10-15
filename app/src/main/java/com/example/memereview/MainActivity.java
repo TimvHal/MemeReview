@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.memereview.firebaseService.FirebaseService;
+import com.example.memereview.model.User;
 
 import java.io.File;
 import java.util.Random;
@@ -36,8 +38,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReviewing(View v) {
-        FirebaseService firebaseService = new FirebaseService();
+        new FirebaseService().getUser(new FirebaseService.DataStatus() {
+            @Override
+            public void DataIsLoaded(User tempUser) {
+                User.getInstance().setAll(tempUser.userName, tempUser.nickName, tempUser.password, tempUser.profilePicture, tempUser.ownedMemes);
+                Log.d("starters", "nibba" + User.getInstance().userName);
+                checkLogin();
+            }
+        }, "john");
 
-        //startActivity(new Intent(this, MemePage.class));
+    }
+
+    private void checkLogin(){
+        Log.d("starters", "nibba" + User.getInstance().userName);
+        Intent intent = new Intent(this, MemePage.class);
+        startActivity(intent);
     }
 }
