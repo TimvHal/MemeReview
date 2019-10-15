@@ -39,6 +39,6 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference myRef = database.getReference("message");
 
         myRef.setValue("Oh nee! Beschuldig me daar nooit van!");*/
-        startActivity(new Intent(this, MemePage.class));
+        startActivity(new Intent(this, NavActivity.class));
     }
 }
