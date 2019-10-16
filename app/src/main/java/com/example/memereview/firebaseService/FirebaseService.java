@@ -1,6 +1,7 @@
 package com.example.memereview.firebaseService;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,8 @@ import androidx.annotation.NonNull;
 import com.example.memereview.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +21,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
 public class FirebaseService {
 
@@ -47,6 +50,24 @@ public class FirebaseService {
         reference.child("users").child(userName).setValue(user);
     }
 
+    public void getUser(final DataStatus dataStatus, String userName) {
+        final String username = userName;
+        final DatabaseReference reference = firebaseDatabase.getReference();
+
+        reference.child("users").child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public synchronized void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User tempUser = dataSnapshot.getValue(User.class);
+                dataStatus.DataIsLoaded(tempUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                dataStatus.DataLoadFailed();
+            }
+        });
+    }
+
     public void addProfilePicture(String userName, Bitmap profilePicture){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         profilePicture.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -68,6 +89,25 @@ public class FirebaseService {
                 Log.d("pf", "succes");
             }
         });
+        User.getInstance().profilePicture = profilePicture;
+    }
+
+    public void getProfilePicture(final DataStatus dataStatus, String userName){
+        StorageReference profilePictureReference = firebaseStorage.getReference().child("profilePicture").child(userName + ".jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        profilePictureReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap=  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                dataStatus.DataIsLoaded(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                dataStatus.DataLoadFailed();
+            }
+        });
     }
 
     public void uploadMeme(String userName, Bitmap meme){
@@ -79,26 +119,9 @@ public class FirebaseService {
         StorageReference memesLocation = reference.child("memes").child(".jpg");
     }
 
-
-    public void getUser(final DataStatus dataStatus, String userName) {
-        DatabaseReference reference = firebaseDatabase.getReference();
-
-        reference.child("users").child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public synchronized void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User tempUser = dataSnapshot.getValue(User.class);
-                dataStatus.DataIsLoaded(tempUser);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("getUser", "failed");
-            }
-        });
-    }
-
     public interface DataStatus{
-        void DataIsLoaded(User tempUser);
+        void DataIsLoaded(Object returnedThing);
+        void DataLoadFailed();
     }
 
 }
