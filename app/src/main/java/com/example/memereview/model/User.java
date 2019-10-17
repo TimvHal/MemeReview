@@ -15,7 +15,7 @@ public class User {
 
     private static User user;
 
-    public static synchronized User getInstance() {
+    public static synchronized User getMainUser() {
         if (user == null) {
             user = new User();
         }

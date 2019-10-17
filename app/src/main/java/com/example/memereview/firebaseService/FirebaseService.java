@@ -3,14 +3,10 @@ package com.example.memereview.firebaseService;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.example.memereview.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,28 +15,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class FirebaseService {
 
     private FirebaseDatabase firebaseDatabase;
     private FirebaseStorage firebaseStorage;
-    public  FirebaseService firebaseService;
-
-    private User user;
 
     public FirebaseService() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
-
-        user = User.getInstance();
     }
-
-    /*public static FirebaseService getInstance(){
-        return firebaseService;
-    }*/
 
     public void addUser(String userName, String nickName, String password){
         User user = new User(userName, nickName, password);
@@ -89,7 +76,7 @@ public class FirebaseService {
                 Log.d("pf", "succes");
             }
         });
-        User.getInstance().profilePicture = profilePicture;
+        User.getMainUser().profilePicture = profilePicture;
     }
 
     public void getProfilePicture(final DataStatus dataStatus, String userName){
@@ -110,13 +97,105 @@ public class FirebaseService {
         });
     }
 
-    public void uploadMeme(String userName, Bitmap meme){
+    public void uploadMeme(final String userName , final Bitmap meme){
+        DatabaseReference amountOfMemesRef = firebaseDatabase.getReference().child("memeCounter");
+        amountOfMemesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("antwoord", "'"+ dataSnapshot.getValue());
+                Long amountOfMemes = (Long) dataSnapshot.getValue();
+                uploadMemeToStorage(amountOfMemes, meme, userName);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void uploadMemeToStorage(final long name, Bitmap meme, final String userName){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         meme.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         StorageReference reference = firebaseStorage.getReference();
-        StorageReference memesLocation = reference.child("memes").child(".jpg");
+        StorageReference memesLocation = reference.child("memes").child(name + ".jpg");
+
+        UploadTask uploadTask = memesLocation.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("meme", "failed");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                uploadMemeReference(name, userName);
+            }
+        });
+    }
+
+    private void uploadMemeReference(long name, String userName){
+        DatabaseReference reference = firebaseDatabase.getReference();
+
+        DatabaseReference userMemeReference = reference.child("users").child(userName).child("memes");
+        String key = userMemeReference.push().getKey();
+        DatabaseReference keyReference = userMemeReference.child(key);
+        keyReference.setValue(name +".jpg");
+
+        DatabaseReference freshReference = reference.child("fresh");
+        String freshKey = freshReference.push().getKey();
+        freshReference.child(freshKey).setValue(name + ".jpg");
+
+        DatabaseReference amountRef = reference.child("memeCounter");
+        amountRef.setValue(name + 1);
+    }
+
+    public void getMemeReferences(String location, final ArrayList<String> list){
+        DatabaseReference reference = firebaseDatabase.getReference().child(location);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                list.clear();
+                int timesLooped = 0;
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    timesLooped++;
+                    if (dataSnapshot.getChildrenCount() - timesLooped > 50) {
+                        continue;
+                    }else{
+                        String data = snapshot.getValue(String.class);
+                        list.add(data);
+                    }
+                }
+                Collections.reverse(list);
+                if (!list.isEmpty()){
+                    Log.d("kanker", " "+ list.get(0));
+                    Log.d("kanker", " "+ list.size());
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getMeme(final DataStatus dataStatus, String name){
+        StorageReference profilePictureReference = firebaseStorage.getReference().child("memes").child(name);
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        profilePictureReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap=  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                dataStatus.DataIsLoaded(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                dataStatus.DataLoadFailed();
+            }
+        });
     }
 
     public interface DataStatus{
