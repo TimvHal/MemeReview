@@ -17,6 +17,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -178,10 +179,6 @@ public class FirebaseService {
                     }
                 }
                 Collections.reverse(list);
-                if (!list.isEmpty()){
-                    Log.d("kanker", " " + location + " " + list.get(0));
-                    Log.d("kanker", " "+ location + " "+  list.size());
-                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -208,19 +205,33 @@ public class FirebaseService {
         });
     }
 
-    public void rateMeme(String location, int rating){
+    public void rateMeme(final String location, final int rating){
         StorageReference storageReference = firebaseStorage.getReference();
-        StorageReference memeReference = storageReference.child("memes").child(location);
-        Log.d("kanker", "hoi");
+        final StorageReference memeReference = storageReference.child("memes").child(location);
         memeReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
-                String amount = storageMetadata.getCustomMetadata("amountRated");
-                String rating =  storageMetadata.getCustomMetadata("rating");
-                
-
+                double amount = Double.parseDouble(storageMetadata.getCustomMetadata("amountRated"));
+                double currentRating =  Double.parseDouble(storageMetadata.getCustomMetadata("rating"));
+                Log.d("aids", " " + storageMetadata.getCreationTimeMillis());
+                double newAmount = amount + 1;
+                double newRating = (((currentRating * amount) + rating) / newAmount);
+                double cleanNewRating = Math.round(newRating * 100.0) / 100.0;
+                StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("amountRated", "" + newAmount).setCustomMetadata("rating", ""+cleanNewRating).build();
+                memeReference.updateMetadata(metadata);
+                if(cleanNewRating > 7 && newAmount > 10){
+                    addMemeToHot(location);
+                }
             }
         });
+    }
+
+    private void addMemeToHot(String location){
+        DatabaseReference databaseReference = firebaseDatabase.getReference();
+        DatabaseReference hotReference = databaseReference.child("hot");
+        String key = hotReference.push().getKey();
+        DatabaseReference keyReference = hotReference.child(key);
+        keyReference.setValue(location);
     }
 
     public interface DataStatus{
