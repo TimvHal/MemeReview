@@ -19,5 +19,4 @@ public class MemeReference {
         freshList = new ArrayList<>();
         hotList = new ArrayList<>();
     }
-
 }

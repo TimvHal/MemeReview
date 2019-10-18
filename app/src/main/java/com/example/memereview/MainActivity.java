@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import com.example.memereview.firebaseService.FirebaseService;
 import com.example.memereview.model.MemeReference;
+import com.example.memereview.model.User;
+
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -35,14 +38,30 @@ public class MainActivity extends AppCompatActivity {
         }
         firebaseService = new FirebaseService();
         firebaseService.getMemeReferences("fresh", MemeReference.getInstance().freshList);
+        firebaseService.getMemeReferences("john", User.getMainUser().ownedMemes);
     }
 
     public void startReviewing(View v) throws ExecutionException, InterruptedException {
-        ImageView imageView = findViewById(R.id.start_emote);
+        firebaseService.rateMeme("3.jpg", 5);
+
+    }
+        /*ImageView imageView = findViewById(R.id.start_emote);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
         Bitmap bitmap = bitmapDrawable.getBitmap();
         firebaseService.uploadMeme("john", bitmap);
-    }
+
+        firebaseService.getUser(new FirebaseService.DataStatus() {
+            @Override
+            public void DataIsLoaded(Object returnedThing) {
+                User tempuser = (User) returnedThing;
+            }
+
+            @Override
+            public void DataLoadFailed() {
+
+            }
+        }, "john");
+    }*/
 
 //        final boolean userDone = false;
 //        boolean imgDone = false;
