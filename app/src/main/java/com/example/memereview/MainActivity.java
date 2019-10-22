@@ -2,6 +2,7 @@ package com.example.memereview;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -42,8 +43,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReviewing(View v) throws ExecutionException, InterruptedException {
-        firebaseService.rateMeme("3.jpg", 5);
-
+        Intent intent = new Intent(this, UploadMenu.class);
+        startActivity(intent);
+        //firebaseService.rateMeme("3.jpg", 5);
     }
         /*ImageView imageView = findViewById(R.id.start_emote);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();

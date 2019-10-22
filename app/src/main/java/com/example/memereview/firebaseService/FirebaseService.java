@@ -99,7 +99,7 @@ public class FirebaseService {
         });
     }
 
-    public void uploadMeme(final String userName , final Bitmap meme){
+    public void uploadMeme(final String userName , final Bitmap meme, final DataStatus dataStatus){
         DatabaseReference amountOfMemesRef = firebaseDatabase.getReference().child("memeCounter");
         amountOfMemesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -107,10 +107,11 @@ public class FirebaseService {
                 Log.d("antwoord", "'"+ dataSnapshot.getValue());
                 Long amountOfMemes = (Long) dataSnapshot.getValue();
                 uploadMemeToStorage(amountOfMemes, meme, userName);
+                dataStatus.DataIsLoaded(dataSnapshot);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                dataStatus.DataLoadFailed();
             }
         });
     }
