@@ -58,11 +58,8 @@ public class UploadMenu extends AppCompatActivity {
                     e.printStackTrace();
                     Toast.makeText(UploadMenu.this, "OOF! Something went wrong!", Toast.LENGTH_SHORT).show();
                 }
-
             }
-
         }
-
     }
 
     public void uploadMeme(View v){
@@ -81,7 +78,6 @@ public class UploadMenu extends AppCompatActivity {
                 imageView.setImageResource(0);
                 galleryButton.setEnabled(true);
                 uploadButton.setEnabled(true);
-
             }
 
             @Override

@@ -15,4 +15,8 @@
     <string name="tab_text_3">Subscribed</string>
     <string name="choose_from_gallery">Choose meme from gallery</string>
     <string name="uploadMeme">Upload meme</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="noUserYet">Create an account</string>
 </resources>

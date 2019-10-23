@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReviewing(View v) throws ExecutionException, InterruptedException {
-        Intent intent = new Intent(this, UploadMenu.class);
+        Intent intent = new Intent(this, LoginMenu.class);
         startActivity(intent);
         //firebaseService.rateMeme("3.jpg", 5);
     }
