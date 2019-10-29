@@ -52,7 +52,6 @@
         android:layout_width="137dp"
         android:layout_height="45dp"
         android:backgroundTint="@android:color/darker_gray"
-        android:onClick="saveProfileChanges"
         android:text="Save Changes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
