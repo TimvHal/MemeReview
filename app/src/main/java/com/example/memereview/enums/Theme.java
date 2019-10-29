@@ -9,10 +9,13 @@ public enum Theme {
         switch(color) {
             case "red":
                 theme = RED;
+                break;
             case "blue":
                 theme = BLUE;
+                break;
             case "black":
                 theme = BLACK;
+                break;
         }
         return theme;
     }
