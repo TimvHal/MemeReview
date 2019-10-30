@@ -41,8 +41,11 @@ public class SettingsFragment extends Fragment {
     private ArrayList<ImageButton> imageButtonList;
     private Button saveChanges;
     private static double audioVolume;
-    private Theme currentTheme;
+    private static Theme currentTheme;
     private Drawable currentBackground;
+    private TextView redThemeText;
+    private TextView blueThemeText;
+    private TextView blackThemeText;
 
     View root;
 
@@ -58,13 +61,18 @@ public class SettingsFragment extends Fragment {
         redTheme = root.findViewById(R.id.theme_red);
         blueTheme = root.findViewById(R.id.theme_blue);
         blackTheme = root.findViewById(R.id.theme_black);
-        currentTheme = Theme.determineTheme(NavActivity.getCurrentTheme());
+        if(currentTheme == null) {
+            currentTheme = Theme.determineTheme(NavActivity.getCurrentTheme());
+        }
         currentBackground = getActivity().findViewById(R.id.container).getBackground();
         imageButtonList = new ArrayList<>();
         imageButtonList.add(redTheme);
         imageButtonList.add(blueTheme);
         imageButtonList.add(blackTheme);
         saveChanges = root.findViewById(R.id.settings_save_changes);
+        redThemeText = root.findViewById(R.id.theme_text_red);
+        blueThemeText = root.findViewById(R.id.theme_text_blue);
+        blackThemeText = root.findViewById(R.id.theme_text_black);
 
         audioSeekBar.setMax(100);
         audioSeekBar.setProgress(100);
@@ -110,7 +118,7 @@ public class SettingsFragment extends Fragment {
                 saveChanges();
             }
         });
-
+        showThemeSelectionAtStart();
         return root;
     }
 
@@ -124,6 +132,10 @@ public class SettingsFragment extends Fragment {
                 if(currentTheme != Theme.RED) {
                     currentTheme = Theme.RED;
                     currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_red);
+                    redThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                    blueThemeText.setBackgroundResource(0);
+                    blackThemeText.setBackgroundResource(0);
+
                 }
                 break;
 
@@ -131,6 +143,9 @@ public class SettingsFragment extends Fragment {
                 if(currentTheme != Theme.BLUE) {
                     currentTheme = Theme.BLUE;
                     currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_blue);
+                    blueThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                    redThemeText.setBackgroundResource(0);
+                    blackThemeText.setBackgroundResource(0);
                 }
                 break;
 
@@ -138,9 +153,25 @@ public class SettingsFragment extends Fragment {
                 if(currentTheme != Theme.BLACK) {
                     currentTheme = Theme.BLACK;
                     currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_black);
+                    blackThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                    redThemeText.setBackgroundResource(0);
+                    blueThemeText.setBackgroundResource(0);
                 }
                 break;
+        }
+    }
 
+    public void showThemeSelectionAtStart() {
+        switch(currentTheme.toString().toLowerCase()) {
+            case "red":
+                redThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                break;
+            case "blue":
+                blueThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                break;
+            case "black":
+                blackThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                break;
         }
     }
 
