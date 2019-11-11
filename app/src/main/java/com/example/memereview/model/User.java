@@ -2,12 +2,15 @@ package com.example.memereview.model;
 
 import android.graphics.Bitmap;
 
+import com.example.memereview.observer.UserObservable;
+import com.example.memereview.observer.UserObserver;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @IgnoreExtraProperties
-public class User {
+public class User implements UserObservable{
 
     public String userName;
     public String nickName;
@@ -16,6 +19,8 @@ public class User {
     public ArrayList<String> ownedMemes;
 
     private static User user;
+
+    List<UserObserver> observers = new ArrayList<>();
 
     public static synchronized User getMainUser() {
         if (user == null) {
@@ -55,4 +60,15 @@ public class User {
         this.ownedMemes = ownedMemes;
     }
 
+    @Override
+    public void register(UserObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void notifyAllObservers() {
+        for (UserObserver observer: observers){
+            observer.update(this);
+        }
+    }
 }

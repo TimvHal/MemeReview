@@ -17,7 +17,6 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -31,12 +30,26 @@ public class FirebaseService {
         firebaseStorage = FirebaseStorage.getInstance();
     }
 
-    public void addUser(String userName, String nickName, String password){
-        User user = new User(userName, nickName, password);
-
+    public void addUser(String userName, String nickName, String password, final DataStatus dataStatus){
+        final User user = new User(userName, nickName, password);
         DatabaseReference reference = firebaseDatabase.getReference();
-
-        reference.child("users").child(userName).setValue(user);
+        final DatabaseReference userReference = reference.child("users").child(userName);
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    dataStatus.DataIsLoaded(false);
+                }
+                else{
+                    userReference.setValue(user);
+                    dataStatus.DataIsLoaded(true);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    dataStatus.DataLoadFailed();
+            }
+        });
     }
 
     public void getUser(final DataStatus dataStatus, String userName) {
@@ -47,6 +60,7 @@ public class FirebaseService {
             @Override
             public synchronized void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User tempUser = dataSnapshot.getValue(User.class);
+                Log.d("naam", tempUser.userName);
                 dataStatus.DataIsLoaded(tempUser);
             }
 
