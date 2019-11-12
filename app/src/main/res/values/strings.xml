@@ -13,6 +13,13 @@
     <string name="tab_text_1">Newest</string>
     <string name="tab_text_2">Popular</string>
     <string name="tab_text_3">Subscribed</string>
+    <string name="choose_from_gallery">Choose meme from gallery</string>
+    <string name="uploadMeme">Upload meme</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="noUserYet">Create an account</string>
+    <string name="nickname">Nickname</string>
     <string name="title_activity_nav">NavActivity</string>
     <string name="title_fresh">Fresh</string>
     <string name="title_hot">Hot</string>
