@@ -1,16 +1,25 @@
 package com.example.memereview.ui.profile;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,8 +32,19 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.memereview.R;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
@@ -32,11 +52,16 @@ public class ProfileFragment extends Fragment {
     private int gallery;
     private ImageButton avatar;
     private Button saveChanges;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userInfoRef;
     private StorageReference mStorageRef;
-    StorageReference avatarRef;
+    private StorageReference avatarRef;
     private Uri contentURI;
     private Bitmap newAvatar;
-    private Bitmap oldAvatar;
+    private SeekBar ageSeekBar;
+    private TextView ageCounter;
+    private EditText usernameField;
+    private RadioGroup genderBoxes;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -44,10 +69,14 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         avatar = root.findViewById(R.id.avatar);
         saveChanges = root.findViewById(R.id.savechanges);
+        usernameField = root.findViewById(R.id.usernameField);
+        genderBoxes = root.findViewById(R.id.genderBoxes);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userInfoRef = firebaseDatabase.getReference("users/Vincent");
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        avatarRef = mStorageRef.child("/avatar/Michiel");
-        applyPersonalChanges();
+        avatarRef = mStorageRef.child("/avatar/Vincent");
 
         saveChanges.setOnClickListener(new View.OnClickListener() {
 
@@ -65,7 +94,31 @@ public class ProfileFragment extends Fragment {
             }
 
         });
+        ageSeekBar = root.findViewById(R.id.ageSeekBar);
+        ageCounter = root.findViewById(R.id.ageCounter);
 
+        ageSeekBar.setProgressTintList(ColorStateList.valueOf(Color.DKGRAY));
+        ageSeekBar.setThumbTintList(ColorStateList.valueOf(Color.parseColor("#660000")));
+        ageSeekBar.setMax(100);
+
+        ageSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                ageCounter.setText(String.valueOf(i));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        applyPersonalChanges(root);
         return root;
     }
 
@@ -101,9 +154,22 @@ public class ProfileFragment extends Fragment {
         if(contentURI != null) {
             avatarRef.putFile(contentURI);
         }
+        String filename = "user_information";
+        String fileContents = usernameField.getText() + "\n" + genderBoxes.getCheckedRadioButtonId()
+                + "\n" + ageCounter.getText();
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(fileContents.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public void applyPersonalChanges() {
+    public void applyPersonalChanges(View root) {
         avatarRef.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @SuppressLint("CheckResult")
@@ -127,6 +193,30 @@ public class ProfileFragment extends Fragment {
                                 }).submit();
                     }
                 });
+        if(new File(getActivity().getApplicationContext().getFilesDir(), "personal_settings").exists()) {
+            try {
+                FileInputStream fileInputStream = getActivity().getApplicationContext().openFileInput("user_information");
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                usernameField.setText(bufferedReader.readLine());
+                RadioButton r = root.findViewById(Integer.parseInt(bufferedReader.readLine()));
+                r.setChecked(true);
+                String currentAge = bufferedReader.readLine();
+                ageSeekBar.setProgress(Integer.parseInt(currentAge));
+                ageCounter.setText(currentAge);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            usernameField.setText("User");
+            ageSeekBar.setProgress(0);
+            ageCounter.setText(0);
+        }
+
+
     }
 
 
