@@ -1,7 +1,6 @@
 package com.example.memereview.ui.profile;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -9,7 +8,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,22 +32,10 @@ import com.example.memereview.R;
 import com.example.memereview.controller.AccountController;
 import com.example.memereview.controller.SuperController;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
@@ -194,7 +180,6 @@ public class ProfileFragment extends Fragment {
                                 }).submit();
                     }
                 });
-        System.out.println(R.id.maleCheckBox);
         usernameField.setText(controller.getUser().nickName);
         RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));
         r.setChecked(true);
