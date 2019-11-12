@@ -30,8 +30,8 @@ public class FirebaseService {
         firebaseStorage = FirebaseStorage.getInstance();
     }
 
-    public void addUser(String userName, String nickName, String password, final DataStatus dataStatus){
-        final User user = new User(userName, nickName, password);
+    public void addUser(String userName, String nickName, String password, String salt, final DataStatus dataStatus){
+        final User user = new User(userName, nickName, password, salt);
         DatabaseReference reference = firebaseDatabase.getReference();
         final DatabaseReference userReference = reference.child("users").child(userName);
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {

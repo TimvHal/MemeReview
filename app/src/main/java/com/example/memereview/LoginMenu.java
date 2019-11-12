@@ -40,17 +40,18 @@ public class LoginMenu extends AppCompatActivity implements UserObserver {
         if (user == null){
             Toast.makeText(LoginMenu.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
         }
-        else if (user.password.equals(password.getText().toString())){
-            Toast.makeText(LoginMenu.this, "Welcome " + user.nickName + "!" , Toast.LENGTH_SHORT).show();
-            goToMainMenu();
-        }
         else{
-            Toast.makeText(LoginMenu.this, "Wrong password!", Toast.LENGTH_SHORT).show();
+            boolean succes = controller.logUserIn(user, password.getText().toString());
+            if (succes){
+                goToMainMenu();
+            }else{
+                Toast.makeText(LoginMenu.this, "Wrong password", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void goToMainMenu(){
-        Intent intent = new Intent(this, MainMenu.class);
+        Intent intent = new Intent(this, NavActivity.class);
         startActivity(intent);
     }
 

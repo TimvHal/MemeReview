@@ -11,6 +11,9 @@ import android.widget.Toast;
 import com.example.memereview.controller.AccountController;
 import com.example.memereview.controller.SuperController;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
 public class CreateAccountMenu extends AppCompatActivity {
 
     private AccountController controller;
@@ -32,7 +35,7 @@ public class CreateAccountMenu extends AppCompatActivity {
         createAccountBtn = findViewById(R.id.createAccount);
     }
 
-    public void createAccount(View v){
+    public void createAccount(View v) throws NoSuchAlgorithmException {
         createAccountBtn.setEnabled(false);
         controller.createAccount(username.getText().toString(), nickname.getText().toString(), password.getText().toString());
         createAccountBtn.setEnabled(true);
