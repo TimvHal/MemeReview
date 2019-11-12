@@ -13,12 +13,12 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".CreateAccountMenu"></activity>
         <activity android:name=".LoginMenu" />
-        <activity android:name=".UploadMenu" />
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".UploadMenu"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".NavActivity"
             android:label="@string/title_activity_nav"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".MemePage"
             android:label="@string/title_activity_meme_page"

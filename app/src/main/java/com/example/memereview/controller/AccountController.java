@@ -128,4 +128,8 @@ public class AccountController {
             return false;
         }
     }
+
+    public User getUser(){
+        return this.user;
+    }
 }

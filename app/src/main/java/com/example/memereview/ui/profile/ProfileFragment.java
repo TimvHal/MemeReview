@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,9 +23,14 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.memereview.R;
+import com.example.memereview.controller.AccountController;
+import com.example.memereview.controller.SuperController;
+import com.example.memereview.firebaseService.FirebaseService;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
 
 public class ProfileFragment extends Fragment {
 
@@ -37,23 +43,34 @@ public class ProfileFragment extends Fragment {
     private Uri contentURI;
     private Bitmap newAvatar;
     private Bitmap oldAvatar;
+    private TextView username;
+    private AccountController controller;
+    FirebaseService service;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        controller = SuperController.getInstance().accountController;
         gallery = 1;
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         avatar = root.findViewById(R.id.avatar);
         saveChanges = root.findViewById(R.id.savechanges);
+        username = root.findViewById(R.id.username);
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         avatarRef = mStorageRef.child("/avatar/Michiel");
+        username.setText(controller.getUser().userName);
         applyPersonalChanges();
+        service = new FirebaseService();
 
         saveChanges.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                saveProfileChanges(v);
+                try {
+                    saveProfileChanges(v);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         });
@@ -97,10 +114,12 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    public void saveProfileChanges(View v) {
-        if(contentURI != null) {
+    public void saveProfileChanges(View v) throws IOException {
+        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), contentURI);
+        service.addProfilePicture(controller.getUser().userName, bitmap);
+        /*if(contentURI != null) {
             avatarRef.putFile(contentURI);
-        }
+        }*/
     }
 
     public void applyPersonalChanges() {
