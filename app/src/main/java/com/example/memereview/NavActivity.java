@@ -1,7 +1,10 @@
 package com.example.memereview;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -79,5 +82,10 @@ public class NavActivity extends AppCompatActivity {
                 findViewById(R.id.container).setBackgroundResource(R.drawable.app_background_black);
                 break;
         }
+    }
+
+    public void goToUploadView(View v){
+        Intent intent = new Intent(this, UploadMenu.class);
+        startActivity(intent);
     }
 }

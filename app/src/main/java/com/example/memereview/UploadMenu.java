@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.memereview.controller.AccountController;
+import com.example.memereview.controller.SuperController;
 import com.example.memereview.firebaseService.FirebaseService;
 import com.google.firebase.storage.UploadTask;
 
@@ -24,9 +26,11 @@ public class UploadMenu extends AppCompatActivity {
     private Button galleryButton;
     private Button uploadButton;
     private int gallery = 1;
+    AccountController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        controller = SuperController.getInstance().accountController;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_menu);
         imageView = findViewById(R.id.memeView);
@@ -70,7 +74,7 @@ public class UploadMenu extends AppCompatActivity {
         galleryButton.setEnabled(false);
         uploadButton.setEnabled(false);
         FirebaseService firebaseService = new FirebaseService();
-        firebaseService.uploadMeme("john", bitmap, new FirebaseService.DataStatus() {
+        firebaseService.uploadMeme(controller.getUser().userName, bitmap, new FirebaseService.DataStatus() {
             @Override
             public void DataIsLoaded(Object returnedThing) {
                 Toast.makeText(UploadMenu.this, "YAY, your meme has been uploaded!", Toast.LENGTH_SHORT).show();

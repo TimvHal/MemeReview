@@ -60,7 +60,6 @@ public class FirebaseService {
             @Override
             public synchronized void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User tempUser = dataSnapshot.getValue(User.class);
-                Log.d("naam", tempUser.userName);
                 dataStatus.DataIsLoaded(tempUser);
             }
 

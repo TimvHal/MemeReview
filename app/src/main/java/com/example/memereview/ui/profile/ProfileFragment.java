@@ -31,6 +31,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.memereview.R;
+import com.example.memereview.UploadMenu;
 import com.example.memereview.controller.AccountController;
 import com.example.memereview.controller.SuperController;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -99,6 +100,7 @@ public class ProfileFragment extends Fragment {
             }
 
         });
+
         ageSeekBar = root.findViewById(R.id.ageSeekBar);
         ageCounter = root.findViewById(R.id.ageCounter);
 
@@ -223,6 +225,5 @@ public class ProfileFragment extends Fragment {
 
 
     }
-
 
 }

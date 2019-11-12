@@ -100,7 +100,7 @@ public class AccountController {
         return generatedPassword;
     }
 
-    public boolean logUserIn(User user, String password){
+    public boolean validatePassword(User user, String password){
         String hashedPassword = null;
         //byte[] salt = user.salt.getBytes();
         //Log.d("wachtwoord", salt + "");
@@ -132,4 +132,7 @@ public class AccountController {
     public User getUser(){
         return this.user;
     }
+
+    public void removeUser(){this.user = null;}
+
 }
