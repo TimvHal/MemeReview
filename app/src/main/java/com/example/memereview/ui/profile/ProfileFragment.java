@@ -31,6 +31,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.memereview.R;
+import com.example.memereview.controller.AccountController;
+import com.example.memereview.controller.SuperController;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,14 +50,14 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
     private int gallery;
     private ImageButton avatar;
     private Button saveChanges;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userInfoRef;
+    private DatabaseReference usernameRef;
     private StorageReference mStorageRef;
     private StorageReference avatarRef;
+    private AccountController controller;
     private Uri contentURI;
     private Bitmap newAvatar;
     private SeekBar ageSeekBar;
@@ -65,6 +67,7 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        controller = SuperController.getInstance().accountController;
         gallery = 1;
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
         avatar = root.findViewById(R.id.avatar);
@@ -73,10 +76,12 @@ public class ProfileFragment extends Fragment {
         genderBoxes = root.findViewById(R.id.genderBoxes);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        userInfoRef = firebaseDatabase.getReference("users/Vincent");
+        usernameRef = firebaseDatabase
+                .getReference("users/" + controller.getUser().userName)
+                .child("userName");
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        avatarRef = mStorageRef.child("/avatar/Vincent");
+        avatarRef = mStorageRef.child("/avatar/" + controller.getUser().userName);
 
         saveChanges.setOnClickListener(new View.OnClickListener() {
 
@@ -154,9 +159,9 @@ public class ProfileFragment extends Fragment {
         if(contentURI != null) {
             avatarRef.putFile(contentURI);
         }
+        usernameRef.setValue(usernameField.getText().toString());
         String filename = "user_information";
-        String fileContents = usernameField.getText() + "\n" + genderBoxes.getCheckedRadioButtonId()
-                + "\n" + ageCounter.getText();
+        String fileContents = genderBoxes.getCheckedRadioButtonId() + "\n" + ageCounter.getText();
         FileOutputStream outputStream;
 
         try {
@@ -199,7 +204,7 @@ public class ProfileFragment extends Fragment {
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                usernameField.setText(bufferedReader.readLine());
+                usernameField.setText(controller.getUser().nickName);
                 RadioButton r = root.findViewById(Integer.parseInt(bufferedReader.readLine()));
                 r.setChecked(true);
                 String currentAge = bufferedReader.readLine();
