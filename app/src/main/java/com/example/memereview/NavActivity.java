@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 
+import com.example.memereview.controller.AccountController;
+import com.example.memereview.controller.SuperController;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,10 +25,12 @@ public class NavActivity extends AppCompatActivity {
 
     private static double audioVolume;
     private static String currentTheme;
+    private AccountController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        controller = SuperController.getInstance().accountController;
         setContentView(R.layout.activity_nav);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -38,25 +42,9 @@ public class NavActivity extends AppCompatActivity {
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        if(new File(getApplicationContext().getFilesDir(), "personal_settings").exists()) {
-            try {
-                FileInputStream fileInputStream = getApplicationContext().openFileInput("personal_settings");
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                audioVolume = Double.parseDouble(bufferedReader.readLine());
-                currentTheme = bufferedReader.readLine().toLowerCase();
-
-                applyPersonalChanges();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            audioVolume = 1.0;
-            currentTheme = "red";
-        }
+       audioVolume = Double.parseDouble(controller.getUser().audioVolume);
+       currentTheme = controller.getUser().theme.toLowerCase();
+       applyPersonalChanges();
     }
 
     public static double getAudioVolume() {

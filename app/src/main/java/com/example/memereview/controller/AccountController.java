@@ -37,6 +37,7 @@ public class AccountController {
                 User temp = (User) returnedThing;
                 if (temp != null){
                     user.setAll(temp.userName, temp.nickName, temp.password, temp.profilePicture, temp.ownedMemes, temp.salt);
+                    user.setPreferences(temp.gender, temp.age, temp.audioVolume, temp.theme);
                 }
                 user.notifyAllObservers();
             }

@@ -31,7 +31,8 @@ public class FirebaseService {
     }
 
     public void addUser(String userName, String nickName, String password, String salt, final DataStatus dataStatus){
-        final User user = new User(userName, nickName, password, salt);
+        //The value '2131230877' is the id for the default radiobutton.
+        final User user = new User(userName, nickName, password, salt, "2131230877", "0", "1.0", "RED");
         DatabaseReference reference = firebaseDatabase.getReference();
         final DatabaseReference userReference = reference.child("users").child(userName);
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {

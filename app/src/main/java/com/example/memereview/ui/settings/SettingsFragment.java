@@ -24,7 +24,11 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.memereview.NavActivity;
 import com.example.memereview.R;
+import com.example.memereview.controller.AccountController;
+import com.example.memereview.controller.SuperController;
 import com.example.memereview.enums.Theme;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -32,6 +36,9 @@ import java.util.ArrayList;
 public class SettingsFragment extends Fragment {
 
     //private SettingsViewModel settingsViewModel;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userRef;
+    private AccountController controller;
     private TextView audioPercentage;
     private ProgressBar audioProgressBar;
     private SeekBar audioSeekBar;
@@ -51,9 +58,13 @@ public class SettingsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        controller = SuperController.getInstance().accountController;
 /*        settingsViewModel =
                 ViewModelProviders.of(this).get(SettingsViewModel.class);*/
         root = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userRef = firebaseDatabase.getReference("users/" + controller.getUser().userName);
 
         audioPercentage = root.findViewById(R.id.sound_percentage);
         audioProgressBar = root.findViewById(R.id.sound_progressBar);
@@ -75,21 +86,21 @@ public class SettingsFragment extends Fragment {
         blackThemeText = root.findViewById(R.id.theme_text_black);
 
         audioSeekBar.setMax(100);
-        audioSeekBar.setProgress(100);
         audioSeekBar.setProgressTintList(ColorStateList.valueOf(Color.DKGRAY));
         audioSeekBar.setThumbTintList(ColorStateList.valueOf(Color.parseColor("#660000")));
         audioProgressBar.setMax(100);
-        audioProgressBar.setProgress(100);
         audioProgressBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#660000")));
-        audioPercentage.setText(100 + "%");
-        audioVolume = 1.0;
+        applyPersonalChanges();
 
         audioSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 audioProgressBar.setProgress(i);
                 audioPercentage.setText(i + "%");
-                audioVolume = Double.parseDouble("0." + i);
+                if(i != 100) {
+                    audioVolume = Double.parseDouble("0." + i);
+                }
+                else { audioVolume = 1.0; }
             }
 
             @Override
@@ -162,7 +173,7 @@ public class SettingsFragment extends Fragment {
     }
 
     public void showThemeSelectionAtStart() {
-        switch(currentTheme.toString().toLowerCase()) {
+        switch(controller.getUser().theme.toLowerCase()) {
             case "red":
                 redThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
                 break;
@@ -175,18 +186,39 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    public void saveChanges() {
-        String filename = "personal_settings";
-        String fileContents = audioVolume + "\n" + currentTheme.toString();
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(fileContents.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void applyPersonalChanges() {
+        audioVolume = Double.parseDouble(controller.getUser().audioVolume);
+        audioSeekBar.setProgress((int) (Double.parseDouble(controller.getUser().audioVolume) * 100));
+        audioProgressBar.setProgress((int) (Double.parseDouble(controller.getUser().audioVolume) * 100));
+        audioPercentage.setText((int) (Double.parseDouble(controller.getUser().audioVolume) * 100) + "%");
+        switch(controller.getUser().theme) {
+            case "RED":
+                redThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                blueThemeText.setBackgroundResource(0);
+                blackThemeText.setBackgroundResource(0);
+                currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_red);
+                break;
+            case "BLUE":
+                blueThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                redThemeText.setBackgroundResource(0);
+                blackThemeText.setBackgroundResource(0);
+                currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_blue);
+                break;
+            case "BLACK":
+                blackThemeText.setBackgroundColor(Color.parseColor("#32FFFFFF"));
+                redThemeText.setBackgroundResource(0);
+                blueThemeText.setBackgroundResource(0);
+                currentBackground = ContextCompat.getDrawable(getContext(), R.drawable.app_background_black);
+                break;
         }
         getActivity().findViewById(R.id.container).setBackground(currentBackground);
+    }
+
+    public void saveChanges() {
+        userRef.child("audioVolume").setValue(String.valueOf(audioVolume));
+        userRef.child("theme").setValue(currentTheme.toString());
+        controller.getUser().audioVolume = String.valueOf(audioVolume);
+        controller.getUser().theme = currentTheme.toString();
+        applyPersonalChanges();
     }
 }

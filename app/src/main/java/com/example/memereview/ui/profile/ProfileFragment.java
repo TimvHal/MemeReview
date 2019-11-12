@@ -34,8 +34,11 @@ import com.example.memereview.R;
 import com.example.memereview.controller.AccountController;
 import com.example.memereview.controller.SuperController;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -50,11 +53,12 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
+    private View root;
     private int gallery;
     private ImageButton avatar;
     private Button saveChanges;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference usernameRef;
+    private DatabaseReference userRef;
     private StorageReference mStorageRef;
     private StorageReference avatarRef;
     private AccountController controller;
@@ -64,21 +68,22 @@ public class ProfileFragment extends Fragment {
     private TextView ageCounter;
     private EditText usernameField;
     private RadioGroup genderBoxes;
+    private String userData;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         controller = SuperController.getInstance().accountController;
         gallery = 1;
-        View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        root = inflater.inflate(R.layout.fragment_profile, container, false);
         avatar = root.findViewById(R.id.avatar);
         saveChanges = root.findViewById(R.id.savechanges);
         usernameField = root.findViewById(R.id.usernameField);
         genderBoxes = root.findViewById(R.id.genderBoxes);
+        userData = "";
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        usernameRef = firebaseDatabase
-                .getReference("users/" + controller.getUser().userName)
-                .child("userName");
+        userRef = firebaseDatabase.getReference("users/" + controller.getUser().userName);
+
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         avatarRef = mStorageRef.child("/avatar/" + controller.getUser().userName);
@@ -159,19 +164,10 @@ public class ProfileFragment extends Fragment {
         if(contentURI != null) {
             avatarRef.putFile(contentURI);
         }
-        usernameRef.setValue(usernameField.getText().toString());
-        String filename = "user_information";
-        String fileContents = genderBoxes.getCheckedRadioButtonId() + "\n" + ageCounter.getText();
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(fileContents.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        userRef.child("userName").setValue(usernameField.getText().toString());
+        userRef.child("gender").setValue(String.valueOf(genderBoxes.getCheckedRadioButtonId()));
+        userRef.child("age").setValue(ageCounter.getText().toString());
+        applyPersonalChanges(root);
     }
 
     public void applyPersonalChanges(View root) {
@@ -198,31 +194,12 @@ public class ProfileFragment extends Fragment {
                                 }).submit();
                     }
                 });
-        if(new File(getActivity().getApplicationContext().getFilesDir(), "personal_settings").exists()) {
-            try {
-                FileInputStream fileInputStream = getActivity().getApplicationContext().openFileInput("user_information");
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                usernameField.setText(controller.getUser().nickName);
-                RadioButton r = root.findViewById(Integer.parseInt(bufferedReader.readLine()));
-                r.setChecked(true);
-                String currentAge = bufferedReader.readLine();
-                ageSeekBar.setProgress(Integer.parseInt(currentAge));
-                ageCounter.setText(currentAge);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        else {
-            usernameField.setText("User");
-            ageSeekBar.setProgress(0);
-            ageCounter.setText(0);
-        }
-
-
+        System.out.println(R.id.maleCheckBox);
+        usernameField.setText(controller.getUser().nickName);
+        RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));
+        r.setChecked(true);
+        String currentAge = controller.getUser().age;
+        ageSeekBar.setProgress(Integer.parseInt(currentAge));
+        ageCounter.setText(currentAge);
     }
-
-
 }

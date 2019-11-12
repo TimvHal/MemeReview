@@ -18,6 +18,10 @@ public class User implements UserObservable{
     public Bitmap profilePicture;
     public ArrayList<String> ownedMemes;
     public String salt;
+    public String gender;
+    public String age;
+    public String audioVolume;
+    public String theme;
 
     private static User user;
 
@@ -39,20 +43,32 @@ public class User implements UserObservable{
     }
 
     //wordt alleen gebruikt om een tijdelijke user aan te maken wanneer er een nieuw account gemaakt wordt.
-    public User(String userName, String nickName, String password, String salt) {
+    public User(String userName, String nickName, String password, String salt, String gender, String age, String audioVolume, String theme) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = password;
         this.salt = salt;
+        this.gender = gender;
+        this.age = age;
+        this.audioVolume = audioVolume;
+        this.theme = theme;
     }
 
-    public void setAll(String userName, String nickName, String password, Bitmap profilePicture, ArrayList<String> ownedMemes, String salt) {
+    public void setAll(String userName, String nickName, String password, Bitmap profilePicture,
+                       ArrayList<String> ownedMemes, String salt) {
         this.userName = userName;
         this.nickName = nickName;
         this.password = password;
         this.profilePicture = profilePicture;
         this.ownedMemes = ownedMemes;
         this.salt = salt;
+    }
+
+    public void setPreferences(String gender, String age, String audioVolume, String theme) {
+        this.gender = gender;
+        this.age = age;
+        this.audioVolume = audioVolume;
+        this.theme = theme;
     }
 
     public void setProfilePicture(Bitmap profilePicture) {
