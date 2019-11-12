@@ -14,6 +14,11 @@
         <activity android:name=".CreateAccountMenu"></activity>
         <activity android:name=".LoginMenu" />
         <activity android:name=".UploadMenu" />
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity
+            android:name=".NavActivity"
+            android:label="@string/title_activity_nav"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".MemePage"
             android:label="@string/title_activity_meme_page"
@@ -22,7 +27,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

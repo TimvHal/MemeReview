@@ -3,22 +3,16 @@ package com.example.memereview;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import com.example.memereview.firebaseService.FirebaseService;
-import com.example.memereview.model.MemeReference;
-import com.example.memereview.model.User;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
-
-    FirebaseService firebaseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +33,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startReviewing(View v) throws ExecutionException, InterruptedException {
-        Intent intent = new Intent(this, LoginMenu.class);
-        startActivity(intent);
+    public void startReviewing(View v) {
+
+/*        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Oh nee! Beschuldig me daar nooit van!");*/
+        startActivity(new Intent(this, NavActivity.class));
     }
 }

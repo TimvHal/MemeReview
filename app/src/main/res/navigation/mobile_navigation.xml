@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_fresh">
+
+    <fragment
+        android:id="@+id/navigation_fresh"
+        android:name="com.example.memereview.ui.fresh.FreshFragment"
+        android:label="@string/title_fresh"
+        tools:layout="@layout/fragment_fresh" />
+
+    <fragment
+        android:id="@+id/navigation_hot"
+        android:name="com.example.memereview.ui.hot.HotFragment"
+        android:label="@string/title_hot"
+        tools:layout="@layout/fragment_hot" />
+
+    <fragment
+        android:id="@+id/navigation_owned"
+        android:name="com.example.memereview.ui.owned.OwnedFragment"
+        android:label="@string/title_owned"
+        tools:layout="@layout/fragment_owned" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.memereview.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.memereview.ui.settings.SettingsFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
