@@ -153,6 +153,9 @@ public class ProfileFragment extends Fragment {
         userRef.child("userName").setValue(usernameField.getText().toString());
         userRef.child("gender").setValue(String.valueOf(genderBoxes.getCheckedRadioButtonId()));
         userRef.child("age").setValue(ageCounter.getText().toString());
+        controller.getUser().nickName = usernameField.getText().toString();
+        controller.getUser().gender = String.valueOf(genderBoxes.getCheckedRadioButtonId());
+        controller.getUser().age = ageCounter.getText().toString();
         applyPersonalChanges(root);
     }
 
