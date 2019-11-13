@@ -2,6 +2,7 @@ package com.example.memereview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.memereview.firebaseService.FirebaseService;
 import com.example.memereview.model.Meme;
 
 import java.util.List;
@@ -48,6 +50,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 .fitCenter()
                 .into(holder.meme);
         holder.averageRating.setText(currentMeme.getAverageRating());
+        holder.memeLocation = currentMeme.getName();
     }
 
     @Override
@@ -67,10 +70,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         public SeekBar ratingSeekBar;
         public TextView currentRating;
         public Button rateButton;
+        public String memeLocation;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
-
             userAvatar = itemView.findViewById(R.id.memeUserAvatar);
             userNameField = itemView.findViewById(R.id.memeUserNameField);
             meme = itemView.findViewById(R.id.memeImage);
@@ -78,6 +81,18 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             ratingSeekBar = itemView.findViewById(R.id.ratingSeekBar);
             currentRating = itemView.findViewById(R.id.ratingCurrent);
             rateButton = itemView.findViewById(R.id.rateButton);
+            rateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    rateMeme();
+                }
+            });
+        }
+
+        private void rateMeme(){
+            FirebaseService firebaseService = new FirebaseService();
+            firebaseService.rateMeme(memeLocation, ratingSeekBar.getProgress());
+            rateButton.setEnabled(false);
         }
     }
 }

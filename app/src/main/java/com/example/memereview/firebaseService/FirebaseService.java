@@ -210,7 +210,7 @@ public class FirebaseService {
 
     }
 
-    public void getMeme(final DataStatus dataStatus, String name){
+    public void getMeme(final DataStatus dataStatus, final String name){
         final StorageReference memeReference = firebaseStorage.getReference().child("memes").child(name);
 
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -220,6 +220,7 @@ public class FirebaseService {
                 Bitmap bitmap=  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 Meme meme = new Meme();
                 meme.setMemeImage(bitmap);
+                meme.setName(name);
                 getMemeMetadata(dataStatus, memeReference, meme);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -295,7 +296,7 @@ public class FirebaseService {
         });
     }
 
-    private void addMemeToHot(String location){
+    public void addMemeToHot(String location){
         DatabaseReference databaseReference = firebaseDatabase.getReference();
         DatabaseReference hotReference = databaseReference.child("hot");
         String key = hotReference.push().getKey();
