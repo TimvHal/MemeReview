@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -166,12 +167,16 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-    
+
     public void saveProfileChanges(View v) {
+        FirebaseService firebaseService = new FirebaseService();
+        BitmapDrawable drawable = (BitmapDrawable) avatar.getDrawable();
+        Bitmap picture = drawable.getBitmap();
+        firebaseService.addProfilePicture(controller.getUser().userName, picture);
         if(contentURI != null) {
             avatarRef.putFile(contentURI);
         }
-        userRef.child("userName").setValue(usernameField.getText().toString());
+        userRef.child("nickName").setValue(usernameField.getText().toString());
         userRef.child("gender").setValue(String.valueOf(genderBoxes.getCheckedRadioButtonId()));
         userRef.child("age").setValue(ageCounter.getText().toString());
         controller.getUser().nickName = usernameField.getText().toString();
@@ -212,11 +217,10 @@ public class ProfileFragment extends Fragment {
                 contentURI = uri;
             }
         });
-        Glide.with(getActivity().getApplicationContext())
+        /*Glide.with(getActivity().getApplicationContext())
                 .load(contentURI)
                 .override(avatar.getWidth(), avatar.getHeight())
-                .into(avatar);
-
+                .into(avatar);*/
         usernameField.setText(controller.getUser().nickName);
         System.out.println(root.findViewById(R.id.maleCheckBox).getId());
         RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));
