@@ -184,6 +184,7 @@ public class ProfileFragment extends Fragment {
                     }
                 });
         usernameField.setText(controller.getUser().nickName);
+        System.out.println(root.findViewById(R.id.maleCheckBox).getId());
         RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));
         r.setChecked(true);
         String currentAge = controller.getUser().age;
