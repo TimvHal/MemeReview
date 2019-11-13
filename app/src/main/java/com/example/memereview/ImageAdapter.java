@@ -35,13 +35,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         Meme currentMeme = memes.get(position);
+        holder.userAvatar.setImageBitmap(currentMeme.getUserAvatar());
         Glide.with(context)
-                .load(currentMeme.getUserAvatarUrl())
+                .load(currentMeme.getUserAvatar())
                 .circleCrop()
                 .into(holder.userAvatar);
         holder.userNameField.setText(currentMeme.getCreator());
         Glide.with(context)
-                .load(currentMeme.getMemeImageUrl())
+                .load(currentMeme.getMemeImage())
                 .fitCenter()
                 .into(holder.meme);
         holder.averageRating.setText(currentMeme.getAverageRating());

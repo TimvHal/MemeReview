@@ -1,34 +1,35 @@
 package com.example.memereview.model;
 
+import android.graphics.Bitmap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class Meme {
-    private String userAvatarUrl;
+    private Bitmap userAvatar;
     private String creator;
-    private String memeImageUrl;
+    private Bitmap memeImage;
     private String averageRating;
 
     public Meme() {
         //Empty constructor is used.
     }
 
-    public Meme(String userAvatarUrl, String creator, String memeImageUrl,
+    public Meme(Bitmap userAvatar, String creator, Bitmap memeImage,
                 String averageRating) {
-        this.userAvatarUrl = userAvatarUrl;
+        this.userAvatar = userAvatar;
         this.creator = creator;
-        this.memeImageUrl = memeImageUrl;
+        this.memeImage = memeImage;
         this.averageRating = averageRating;
     }
 
-    public String getUserAvatarUrl() {
-        return this.userAvatarUrl;
+    public Bitmap getUserAvatar() {
+        return this.userAvatar;
     }
 
-    public void setUserAvatarUrl(String url) {
-        this.userAvatarUrl = url;
+    public void setUserAvatar(Bitmap map) {
+        this.userAvatar = map;
     }
 
     public String getCreator() {
@@ -38,12 +39,13 @@ public class Meme {
     public void setCreator(String creator) {
         this.creator = creator;
     }
-    public String getMemeImageUrl() {
-        return this.memeImageUrl;
+
+    public Bitmap getMemeImage() {
+        return this.memeImage;
     }
 
-    public void setMemeImageUrl(String url) {
-        this.memeImageUrl = url;
+    public void setMemeImage(Bitmap map) {
+        this.memeImage = map;
     }
 
     public String getAverageRating() {

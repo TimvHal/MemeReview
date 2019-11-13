@@ -178,6 +178,7 @@ public class ProfileFragment extends Fragment {
                                     public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
                                         Bitmap resized = Bitmap.createScaledBitmap(resource, avatar.getWidth(), avatar.getHeight(), true);
                                         avatar.setImageBitmap(resized);
+                                        controller.getUser().profilePicture = resized;
                                         return false;
                                     }
                                 }).submit();
