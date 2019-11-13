@@ -2,6 +2,7 @@ package com.example.memereview.ui.fresh;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,9 @@ public class FreshFragment extends Fragment {
     private List<Meme> memes;
     private Bitmap currentMeme;
     private AccountController controller;
+    private ArrayList<String> memeReferences;
+    private int amountToAdd;
+    private int amountAdded = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -58,38 +62,53 @@ public class FreshFragment extends Fragment {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         DatabaseReference freshReference = databaseReference.child("fresh");
+        memeReferences = new ArrayList<>();
         firebaseService = new FirebaseService();
-
-        freshReference.addValueEventListener(new ValueEventListener() {
+        getMemeReferences();
+        /*freshReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot imageInfo : dataSnapshot.getChildren()) {
                     String imageName = (String) imageInfo.getValue();
-                    getMeme(imageName);
                     Meme m = new Meme(controller.getUser().profilePicture, "Placeholder", currentMeme, "Placeholder");
-                    memes.add(m);
+                    //memes.add(m);
                 }
 
-                adapter = new ImageAdapter(getActivity().getApplicationContext(), memes);
-
-                recyclerView.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         return root;
+    }
+
+    private void getMemeReferences(){
+        Log.d("zooi", memeReferences.size() + "");
+        firebaseService.getMemeReferences("fresh", new FirebaseService.DataStatus() {
+            @Override
+            public void DataIsLoaded(Object returnedThing) {
+                memeReferences = (ArrayList<String>) returnedThing;
+                Log.d("zooi", memeReferences.size() + "");
+                amountToAdd = memeReferences.size();
+                addMemes();
+            }
+
+            @Override
+            public void DataLoadFailed() {
+
+            }
+        });
     }
 
     public void getMeme(String name){
         firebaseService.getMeme(new FirebaseService.DataStatus() {
             @Override
             public void DataIsLoaded(Object returnedThing) {
-                Bitmap meme = (Bitmap) returnedThing;
-                currentMeme = meme;
+                Meme meme = (Meme) returnedThing;
+                addToMemes(meme);
             }
 
             @Override
@@ -97,6 +116,25 @@ public class FreshFragment extends Fragment {
 
             }
         }, name);
+    }
+
+    private void addMemes(){
+        for (String memeLocation:memeReferences){
+            getMeme(memeLocation);
+        }
+    }
+
+    private void addToMemes(Meme meme){
+        amountAdded ++;
+        memes.add(meme);
+        startAdapter();
+    }
+
+    private void startAdapter(){
+        if (amountAdded == amountToAdd){
+            adapter = new ImageAdapter(getActivity().getApplicationContext(), memes);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
 /*    public Meme createMeme() {

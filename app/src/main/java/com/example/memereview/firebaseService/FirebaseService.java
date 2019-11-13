@@ -2,8 +2,16 @@ package com.example.memereview.firebaseService;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
+
+import com.example.memereview.R;
+import com.example.memereview.model.Meme;
 import com.example.memereview.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,6 +27,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventListener;
+import java.util.FormatFlagsConversionMismatchException;
 
 public class FirebaseService {
 
@@ -30,7 +40,7 @@ public class FirebaseService {
         firebaseStorage = FirebaseStorage.getInstance();
     }
 
-    public void addUser(String userName, String nickName, String password, String salt, final DataStatus dataStatus){
+    public void addUser(final String userName, String nickName, String password, String salt, final DataStatus dataStatus, final Bitmap icon){
         //The value '2131230877' is the id for the default radiobutton.
         final User user = new User(userName, nickName, password, salt, "2131230877", "0", "1.0", "RED");
         DatabaseReference reference = firebaseDatabase.getReference();
@@ -43,6 +53,7 @@ public class FirebaseService {
                 }
                 else{
                     userReference.setValue(user);
+                    addProfilePicture(userName, icon);
                     dataStatus.DataIsLoaded(true);
                 }
             }
@@ -131,7 +142,7 @@ public class FirebaseService {
     }
 
     private void uploadMemeToStorage(final long name, Bitmap meme, final String userName){
-        StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("amountRated", "" + 0).setCustomMetadata("rating", ""+0).build();
+        StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("amountRated", "" + 0).setCustomMetadata("rating", ""+0).setCustomMetadata("creator", userName).build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         meme.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -170,47 +181,46 @@ public class FirebaseService {
         amountRef.setValue(name + 1);
     }
 
-    public void getMemeReferences(final String location, final ArrayList<String> list){
+    public void getMemeReferences(final String location, final DataStatus dataStatus) {
         DatabaseReference reference;
-        if (location == "fresh" || location == "hot"){
+        if (location == "fresh" || location == "hot") {
             reference = firebaseDatabase.getReference().child(location);
-        }else{
+        } else {
             reference = firebaseDatabase.getReference().child("users").child(location).child("memes");
         }
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    list.clear();
-                int timesLooped = 0;
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    timesLooped++;
-                    if (dataSnapshot.getChildrenCount() - timesLooped > 50 ) {
-                        continue;
-                    }else{
-                        String data = snapshot.getValue(String.class);
-                        ArrayList<String> tempList = new ArrayList();
-                        tempList.add(data);
-                    }
+                ArrayList<String> memeReferences = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    memeReferences.add(ds.getValue(String.class));
                 }
-                Collections.reverse(list);
+                while (memeReferences.size() > 15){
+                    memeReferences.remove(0);
+                }
+                dataStatus.DataIsLoaded(memeReferences);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                dataStatus.DataLoadFailed();
             }
         });
+
     }
 
     public void getMeme(final DataStatus dataStatus, String name){
-        StorageReference memeReference = firebaseStorage.getReference().child("memes").child(name);
+        final StorageReference memeReference = firebaseStorage.getReference().child("memes").child(name);
 
         final long ONE_MEGABYTE = 1024 * 1024;
         memeReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bitmap=  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                dataStatus.DataIsLoaded(bitmap);
+                Meme meme = new Meme();
+                meme.setMemeImage(bitmap);
+                getMemeMetadata(dataStatus, memeReference, meme);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -219,6 +229,50 @@ public class FirebaseService {
             }
         });
     }
+
+    public void getMemeMetadata(final DataStatus dataStatus, StorageReference reference, final Meme meme){
+        reference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+            @Override
+            public void onSuccess(StorageMetadata storageMetadata) {
+                meme.setAmountRated(storageMetadata.getCustomMetadata("amountRated"));
+                meme.setAverageRating(storageMetadata.getCustomMetadata("rating"));
+                String creatorName = storageMetadata.getCustomMetadata("creator");
+                getCreatorNickname(dataStatus, meme, creatorName);
+            }
+        });
+    }
+
+    private void getCreatorNickname(final DataStatus dataStatus, final Meme meme, final String creatorName){
+        DatabaseReference userNicknameReference = firebaseDatabase.getReference().child("users").child(creatorName).child("nickName");
+        userNicknameReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                meme.setCreator(dataSnapshot.getValue(String.class));
+                getCreatorProfilePicture(dataStatus, meme, creatorName);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void getCreatorProfilePicture(final DataStatus dataStatus, final Meme meme, String creatorName){
+        StorageReference profilePictureReference = firebaseStorage.getReference().child("profilePicture").child(creatorName + ".jpg");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        profilePictureReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap=  BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                meme.setUserAvatar(bitmap);
+                dataStatus.DataIsLoaded(meme);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
+        });
+    }
+
 
     public void rateMeme(final String location, final int rating){
         StorageReference storageReference = firebaseStorage.getReference();

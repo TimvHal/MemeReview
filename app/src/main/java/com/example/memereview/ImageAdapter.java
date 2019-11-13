@@ -1,6 +1,7 @@
 package com.example.memereview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 .circleCrop()
                 .into(holder.userAvatar);
         holder.userNameField.setText(currentMeme.getCreator());
+        holder.meme.setImageBitmap(currentMeme.getMemeImage());
         Glide.with(context)
                 .load(currentMeme.getMemeImage())
                 .fitCenter()
@@ -51,6 +53,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public int getItemCount() {
         return this.memes.size();
+    }
+
+    public void addToMemes(Meme meme){
+        memes.add(meme);
     }
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {

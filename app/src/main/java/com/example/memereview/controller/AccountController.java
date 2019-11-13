@@ -1,5 +1,6 @@
 package com.example.memereview.controller;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class AccountController {
         }, username);
     }
 
-    public synchronized void createAccount(String userName, String nickName, String password) throws NoSuchAlgorithmException {
+    public synchronized void createAccount(String userName, String nickName, String password, Bitmap icon) throws NoSuchAlgorithmException {
         byte[] salt = generateSalt();
         String hashedPassword = generateSecurePassword(password,salt);
         Log.d("wachtwoord", salt + "");
@@ -62,7 +63,7 @@ public class AccountController {
             @Override
             public void DataLoadFailed() {
             }
-        });
+        }, icon);
     }
 
     private synchronized void showResult(boolean succes){

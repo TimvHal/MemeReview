@@ -2,6 +2,8 @@ package com.example.memereview;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -36,8 +38,9 @@ public class CreateAccountMenu extends AppCompatActivity {
     }
 
     public void createAccount(View v) throws NoSuchAlgorithmException {
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.clapping_hands);
         createAccountBtn.setEnabled(false);
-        controller.createAccount(username.getText().toString(), nickname.getText().toString(), password.getText().toString());
+        controller.createAccount(username.getText().toString(), nickname.getText().toString(), password.getText().toString(), icon);
         createAccountBtn.setEnabled(true);
     }
 
