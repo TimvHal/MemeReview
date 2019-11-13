@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.memereview.R;
 import com.example.memereview.controller.AccountController;
 import com.example.memereview.controller.SuperController;
+import com.example.memereview.firebaseService.FirebaseService;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -114,8 +117,26 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        getProfilePicture();
         applyPersonalChanges(root);
         return root;
+    }
+
+    private void getProfilePicture(){
+        Log.d(" zooi", controller.getUser().userName + ".jpg");
+        FirebaseService firebaseService = new FirebaseService();
+        firebaseService.getProfilePicture(new FirebaseService.DataStatus() {
+            @Override
+            public void DataIsLoaded(Object returnedThing) {
+                Bitmap picture = (Bitmap) returnedThing;
+                avatar.setImageBitmap(picture);
+            }
+
+            @Override
+            public void DataLoadFailed() {
+
+            }
+        }, controller.getUser().userName);
     }
 
     public void uploadNewProfilePicture(View v) {
@@ -145,7 +166,7 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-
+    
     public void saveProfileChanges(View v) {
         if(contentURI != null) {
             avatarRef.putFile(contentURI);

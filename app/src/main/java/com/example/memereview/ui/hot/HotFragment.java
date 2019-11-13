@@ -63,7 +63,6 @@ public class HotFragment extends Fragment {
                 amountToAdd = memeReferences.size();
                 addMemes();
             }
-
             @Override
             public void DataLoadFailed() {
 
