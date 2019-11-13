@@ -36,13 +36,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         Meme currentMeme = memes.get(position);
-        holder.userAvatar.setImageBitmap(currentMeme.getUserAvatar());
+        //holder.userAvatar.setImageBitmap(currentMeme.getUserAvatar());
         Glide.with(context)
                 .load(currentMeme.getUserAvatar())
                 .circleCrop()
                 .into(holder.userAvatar);
         holder.userNameField.setText(currentMeme.getCreator());
-        holder.meme.setImageBitmap(currentMeme.getMemeImage());
+        //holder.meme.setImageBitmap(currentMeme.getMemeImage());
         Glide.with(context)
                 .load(currentMeme.getMemeImage())
                 .fitCenter()
@@ -78,6 +78,24 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             ratingSeekBar = itemView.findViewById(R.id.ratingSeekBar);
             currentRating = itemView.findViewById(R.id.ratingCurrent);
             rateButton = itemView.findViewById(R.id.rateButton);
+
+            ratingSeekBar.setMax(10);
+            ratingSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    currentRating.setText(String.valueOf(progress));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
         }
     }
 }
