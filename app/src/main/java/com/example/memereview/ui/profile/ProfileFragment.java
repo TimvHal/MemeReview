@@ -160,7 +160,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public void applyPersonalChanges(View root) {
-        avatarRef.getDownloadUrl()
+/*        avatarRef.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @SuppressLint("CheckResult")
                     @Override
@@ -183,7 +183,19 @@ public class ProfileFragment extends Fragment {
                                     }
                                 }).submit();
                     }
-                });
+                });*/
+
+        avatarRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                contentURI = uri;
+            }
+        });
+        Glide.with(getActivity().getApplicationContext())
+                .load(contentURI)
+                .override(avatar.getWidth(), avatar.getHeight())
+                .into(avatar);
+
         usernameField.setText(controller.getUser().nickName);
         System.out.println(root.findViewById(R.id.maleCheckBox).getId());
         RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));

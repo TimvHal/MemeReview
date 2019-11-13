@@ -12,6 +12,7 @@ public class Meme {
     private Bitmap memeImage;
     private String averageRating;
     private String amountRated;
+    private String name;
 
     public Meme() {
         //Empty constructor is used.
@@ -61,4 +62,7 @@ public class Meme {
 
     public void setAmountRated(String amountRated) {this.amountRated = amountRated;}
 
+    public String getName() {return name;}
+
+    public void setName(String name) {this.name = name;}
 }
