@@ -82,6 +82,7 @@ public class UploadMenu extends AppCompatActivity {
                 imageView.setImageResource(0);
                 galleryButton.setEnabled(true);
                 uploadButton.setEnabled(true);
+                loadMainMenu();
             }
 
             @Override
@@ -91,6 +92,10 @@ public class UploadMenu extends AppCompatActivity {
                 uploadButton.setEnabled(true);
             }
         });
+    }
+
+    public void loadMainMenu() {
+        startActivity(new Intent(this, NavActivity.class));
     }
 
 
