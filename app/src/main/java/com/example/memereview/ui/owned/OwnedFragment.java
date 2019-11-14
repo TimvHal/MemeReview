@@ -24,6 +24,7 @@ import com.example.memereview.controller.SuperController;
 import com.example.memereview.firebaseService.FirebaseService;
 import com.example.memereview.model.Meme;
 import com.example.memereview.ui.hot.HotViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -42,11 +43,13 @@ public class OwnedFragment extends Fragment {
     private ArrayList<String> memeReferences;
     private int amountToAdd;
     private int amountAdded = 0;
+    private BottomNavigationView menu;
 
     private OwnedViewModel ownedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        menu = getActivity().findViewById(R.id.nav_view);
         controller = SuperController.getInstance().accountController;
         ownedViewModel =
                 ViewModelProviders.of(this).get(OwnedViewModel.class);
@@ -62,6 +65,7 @@ public class OwnedFragment extends Fragment {
     }
 
     private void getMemeReferences(){
+        firebaseService.enableBottomBar(menu, false);
         firebaseService.getMemeReferences(controller.getUser().userName, new FirebaseService.DataStatus() {
             @Override
             public void DataIsLoaded(Object returnedThing) {
@@ -107,6 +111,7 @@ public class OwnedFragment extends Fragment {
         if (amountAdded == amountToAdd){
             adapter = new OwnedImageAdapter(getActivity().getApplicationContext(), memes);
             recyclerView.setAdapter(adapter);
+            firebaseService.enableBottomBar(menu, true);
         }
     }
 

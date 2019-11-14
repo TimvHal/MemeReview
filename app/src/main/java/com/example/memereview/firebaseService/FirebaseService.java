@@ -1,11 +1,13 @@
 package com.example.memereview.firebaseService;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,8 @@ import com.example.memereview.model.Meme;
 import com.example.memereview.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -182,6 +186,7 @@ public class FirebaseService {
     }
 
     public void getMemeReferences(final String location, final DataStatus dataStatus) {
+
         DatabaseReference reference;
         if (location == "fresh" || location == "hot") {
             reference = firebaseDatabase.getReference().child(location);
@@ -307,6 +312,12 @@ public class FirebaseService {
     public interface DataStatus{
         void DataIsLoaded(Object returnedThing);
         void DataLoadFailed();
+    }
+
+    public void enableBottomBar(BottomNavigationView mBottomMenu, boolean enable){
+        for (int i = 0; i < mBottomMenu.getMenu().size(); i++) {
+            mBottomMenu.getMenu().getItem(i).setEnabled(enable);
+        }
     }
 
 }
