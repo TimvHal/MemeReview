@@ -58,6 +58,9 @@ public class ProfileFragment extends Fragment {
     private TextView ageCounter;
     private EditText usernameField;
     private RadioGroup genderBoxes;
+    private RadioButton maleButton;
+    private RadioButton femaleButton;
+    private RadioButton otherButton;
     private String userData;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -69,6 +72,9 @@ public class ProfileFragment extends Fragment {
         saveChanges = root.findViewById(R.id.savechanges);
         usernameField = root.findViewById(R.id.usernameField);
         genderBoxes = root.findViewById(R.id.genderBoxes);
+        maleButton = root.findViewById(R.id.maleCheckBox);
+        femaleButton = root.findViewById(R.id.femaleCheckBox);
+        otherButton = root.findViewById((R.id.otherCheckBox));
         userData = "";
 
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -177,13 +183,27 @@ public class ProfileFragment extends Fragment {
             avatarRef.putFile(contentURI);
         }
         userRef.child("nickName").setValue(usernameField.getText().toString());
-        userRef.child("gender").setValue(String.valueOf(genderBoxes.getCheckedRadioButtonId()));
+        userRef.child("gender").setValue(getGender());
         userRef.child("age").setValue(ageCounter.getText().toString());
         controller.getUser().nickName = usernameField.getText().toString();
-        controller.getUser().gender = String.valueOf(genderBoxes.getCheckedRadioButtonId());
+        controller.getUser().gender = getGender();
         controller.getUser().age = ageCounter.getText().toString();
         applyPersonalChanges(root);
     }
+
+    public String getGender(){
+        int id = genderBoxes.getCheckedRadioButtonId();
+        if (id == maleButton.getId()){
+            return "male";
+        }
+        else if (id == femaleButton.getId()){
+            return "female";
+        }
+        else{
+            return "other";
+        }
+    }
+
 
     public void applyPersonalChanges(View root) {
 /*        avatarRef.getDownloadUrl()
@@ -222,11 +242,21 @@ public class ProfileFragment extends Fragment {
                 .override(avatar.getWidth(), avatar.getHeight())
                 .into(avatar);*/
         usernameField.setText(controller.getUser().nickName);
-        System.out.println(root.findViewById(R.id.maleCheckBox).getId());
-        RadioButton r = root.findViewById(Integer.parseInt(controller.getUser().gender));
-        //r.setChecked(true);
+        setGenderBox(controller.getUser().gender);
         String currentAge = controller.getUser().age;
         ageSeekBar.setProgress(Integer.parseInt(currentAge));
         ageCounter.setText(currentAge);
+    }
+
+    private void setGenderBox(String gender){
+        if (gender.equals("male")){
+            maleButton.setChecked(true);
+        }
+        else if (gender.equals("female")){
+            femaleButton.setChecked(true);
+        }
+        else{
+            otherButton.setChecked(true);
+        }
     }
 }
