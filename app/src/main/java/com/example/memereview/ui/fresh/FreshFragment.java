@@ -66,12 +66,16 @@ public class FreshFragment extends Fragment {
                 memeReferences = (ArrayList<String>) returnedThing;
                 Log.d("zooi", memeReferences.size() + "");
                 amountToAdd = memeReferences.size();
+                if(amountToAdd == 0) {
+                    firebaseService.enableBottomBar(menu, true);
+                    return;
+                }
                 addMemes();
             }
 
             @Override
             public void DataLoadFailed() {
-
+                firebaseService.enableBottomBar(menu, true);
             }
         });
     }
@@ -86,7 +90,7 @@ public class FreshFragment extends Fragment {
 
             @Override
             public void DataLoadFailed() {
-
+                firebaseService.enableBottomBar(menu, true);
             }
         }, name);
     }

@@ -71,11 +71,15 @@ public class OwnedFragment extends Fragment {
             public void DataIsLoaded(Object returnedThing) {
                 memeReferences = (ArrayList<String>) returnedThing;
                 amountToAdd = memeReferences.size();
+                if(amountToAdd == 0) {
+                    firebaseService.enableBottomBar(menu, true);
+                    return;
+                }
                 addMemes();
             }
             @Override
             public void DataLoadFailed() {
-
+                firebaseService.enableBottomBar(menu, true);
             }
         });
     }
@@ -90,7 +94,7 @@ public class OwnedFragment extends Fragment {
 
             @Override
             public void DataLoadFailed() {
-
+                firebaseService.enableBottomBar(menu, true);
             }
         }, name);
     }
