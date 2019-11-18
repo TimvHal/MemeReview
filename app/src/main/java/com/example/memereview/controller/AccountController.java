@@ -1,10 +1,13 @@
 package com.example.memereview.controller;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.memereview.CreateAccountMenu;
+import com.example.memereview.LoginMenu;
 import com.example.memereview.firebaseService.FirebaseService;
 import com.example.memereview.model.User;
 import com.example.memereview.observer.UserObserver;
