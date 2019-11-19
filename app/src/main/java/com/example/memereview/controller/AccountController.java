@@ -47,7 +47,7 @@ public class AccountController {
             }
             @Override
             public void DataLoadFailed() {
-                Log.d("great", "failure");
+                Log.d("meme", "failed");
             }
         }, username);
     }
@@ -55,8 +55,6 @@ public class AccountController {
     public synchronized void createAccount(String userName, String nickName, String password, Bitmap icon) throws NoSuchAlgorithmException {
         byte[] salt = generateSalt();
         String hashedPassword = generateSecurePassword(password,salt);
-        Log.d("wachtwoord", salt + "");
-
         firebaseService.addUser(userName, nickName, hashedPassword, salt.toString(), new FirebaseService.DataStatus() {
             @Override
             public void DataIsLoaded(Object returnedThing) {
@@ -108,7 +106,6 @@ public class AccountController {
     public boolean validatePassword(User user, String password){
         String hashedPassword = null;
         //byte[] salt = user.salt.getBytes();
-        //Log.d("wachtwoord", salt + "");
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             //md.update(salt);
@@ -124,8 +121,6 @@ public class AccountController {
         {
             e.printStackTrace();
         }
-
-        Log.d("wachtwoord", user.password + " " + hashedPassword);
         if (hashedPassword.equals(user.password)){
             return true;
         }

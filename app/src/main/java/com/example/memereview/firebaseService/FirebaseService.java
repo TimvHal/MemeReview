@@ -133,7 +133,6 @@ public class FirebaseService {
         amountOfMemesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("antwoord", "'"+ dataSnapshot.getValue());
                 Long amountOfMemes = (Long) dataSnapshot.getValue();
                 uploadMemeToStorage(amountOfMemes, meme, userName);
                 dataStatus.DataIsLoaded(dataSnapshot);
@@ -288,7 +287,6 @@ public class FirebaseService {
             public void onSuccess(StorageMetadata storageMetadata) {
                 double amount = Double.parseDouble(storageMetadata.getCustomMetadata("amountRated"));
                 double currentRating =  Double.parseDouble(storageMetadata.getCustomMetadata("rating"));
-                Log.d("aids", " " + storageMetadata.getCreationTimeMillis());
                 double newAmount = amount + 1;
                 double newRating = (((currentRating * amount) + rating) / newAmount);
                 double cleanNewRating = Math.round(newRating * 100.0) / 100.0;
