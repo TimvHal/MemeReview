@@ -47,7 +47,7 @@ public class AccountController {
             }
             @Override
             public void DataLoadFailed() {
-                Log.d("great", "failure");
+                Log.d("meme", "failed");
             }
         }, username);
     }
