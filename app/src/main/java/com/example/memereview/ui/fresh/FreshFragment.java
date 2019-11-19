@@ -59,12 +59,10 @@ public class FreshFragment extends Fragment {
 
     private void getMemeReferences(){
         firebaseService.enableBottomBar(menu, false);
-        Log.d("zooi", memeReferences.size() + "");
         firebaseService.getMemeReferences("fresh", new FirebaseService.DataStatus() {
             @Override
             public void DataIsLoaded(Object returnedThing) {
                 memeReferences = (ArrayList<String>) returnedThing;
-                Log.d("zooi", memeReferences.size() + "");
                 amountToAdd = memeReferences.size();
                 if(amountToAdd == 0) {
                     firebaseService.enableBottomBar(menu, true);

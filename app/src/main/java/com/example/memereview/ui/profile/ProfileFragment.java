@@ -130,7 +130,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getProfilePicture(){
-        Log.d(" zooi", controller.getUser().userName + ".jpg");
         FirebaseService firebaseService = new FirebaseService();
         firebaseService.getProfilePicture(new FirebaseService.DataStatus() {
             @Override
