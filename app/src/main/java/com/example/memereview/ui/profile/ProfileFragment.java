@@ -206,41 +206,12 @@ public class ProfileFragment extends Fragment {
 
 
     public void applyPersonalChanges(View root) {
-/*        avatarRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @SuppressLint("CheckResult")
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide.with(getActivity().getApplicationContext())
-                                .asBitmap()
-                                .load(uri)
-                                .listener(new RequestListener<Bitmap>() {
-                                    @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                                        Bitmap resized = Bitmap.createScaledBitmap(resource, avatar.getWidth(), avatar.getHeight(), true);
-                                        avatar.setImageBitmap(resized);
-                                        controller.getUser().profilePicture = resized;
-                                        return false;
-                                    }
-                                }).submit();
-                    }
-                });*/
-
         avatarRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 contentURI = uri;
             }
         });
-        /*Glide.with(getActivity().getApplicationContext())
-                .load(contentURI)
-                .override(avatar.getWidth(), avatar.getHeight())
-                .into(avatar);*/
         usernameField.setText(controller.getUser().nickName);
         setGenderBox(controller.getUser().gender);
         String currentAge = controller.getUser().age;
